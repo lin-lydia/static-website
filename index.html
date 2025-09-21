@@ -8,5 +8,180 @@
 <p>My first deployment</p>
 <p> Now I add one more line into file and it should be auto deployed by Amplify</p>
 <p> Next I am making changes at local machine and I will git push</p>
+
+  <!-- Add this to your index.html -->
+<div class="contact-section">
+    <h2>📧 Contact Me</h2>
+    <form id="contactForm" class="contact-form">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" name="subject" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        
+        <button type="submit" id="submitBtn">
+            <span id="buttonText">Send Message</span>
+            <span id="spinner" style="display: none;">Sending...</span>
+        </button>
+    </form>
+    
+    <div id="responseMessage" style="display: none;"></div>
+</div>
+
+<style>
+.contact-section {
+    background: rgba(255,255,255,0.1);
+    padding: 40px;
+    border-radius: 15px;
+    margin: 40px 0;
+    backdrop-filter: blur(10px);
+}
+
+.contact-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    background: rgba(255,255,255,0.9);
+    color: #333;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(255,153,0,0.5);
+}
+
+button[type="submit"] {
+    background: #FF9900;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.3s;
+}
+
+button[type="submit"]:hover {
+    background: #e68900;
+}
+
+button[type="submit"]:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+#responseMessage {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.success {
+    background: rgba(76, 175, 80, 0.2);
+    border: 2px solid #4CAF50;
+    color: #4CAF50;
+}
+
+.error {
+    background: rgba(244, 67, 54, 0.2);
+    border: 2px solid #f44336;
+    color: #f44336;
+}
+</style>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const buttonText = document.getElementById('buttonText');
+    const spinner = document.getElementById('spinner');
+    const responseMessage = document.getElementById('responseMessage');
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    buttonText.style.display = 'none';
+    spinner.style.display = 'inline';
+    responseMessage.style.display = 'none';
+    
+    // Get form data
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        subject: document.getElementById('subject').value,
+        message: document.getElementById('message').value
+    };
+    
+    try {
+        // We'll add the Lambda API endpoint here
+        const response = await fetch('YOUR_LAMBDA_API_ENDPOINT', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            responseMessage.innerHTML = '✅ Message sent successfully! I\'ll get back to you soon.';
+            responseMessage.className = 'success';
+            document.getElementById('contactForm').reset();
+        } else {
+            throw new Error(result.message || 'Something went wrong');
+        }
+        
+    } catch (error) {
+        responseMessage.innerHTML = '❌ Failed to send message. Please try again.';
+        responseMessage.className = 'error';
+    }
+    
+    // Reset button state
+    submitBtn.disabled = false;
+    buttonText.style.display = 'inline';
+    spinner.style.display = 'none';
+    responseMessage.style.display = 'block';
+});
+</script>
+
 </body>
 </html>
